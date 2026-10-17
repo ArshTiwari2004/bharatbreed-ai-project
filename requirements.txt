@@ -1,0 +1,21 @@
+# Core ML / DL
+tensorflow>=2.15,<3.0
+numpy>=1.24
+pillow>=10.0
+
+# Computer vision utilities
+opencv-python-headless>=4.8
+
+# Dataset handling / evaluation
+scikit-learn>=1.3
+
+# Front end (Streamlit UI)
+streamlit>=1.40
+pandas>=2.0
+
+# Testing
+pytest>=7.4
+
+# --- Optional, only needed for the pieces the synopsis lists as stretch goals ---
+# fastapi>=0.104             # if you expose inference as a real HTTP service
+# uvicorn>=0.24

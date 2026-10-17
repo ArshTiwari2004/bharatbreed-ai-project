@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated data / model artifacts (regenerate via run_pipeline.py)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+models/*
+!models/.gitkeep
+logs/*
+!logs/.gitkeep
+
+.ipynb_checkpoints/
+.DS_Store
