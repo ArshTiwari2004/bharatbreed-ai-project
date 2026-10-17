@@ -1,7 +1,7 @@
 # BharatBreed AI
 ### AI-Powered Image-Based Breed Recognition System for Indian Cattle & Buffaloes
 
-Minor Project — Department of Information Technology, Bhagwan Parshuram Institute of Technology, Rohini, New Delhi
+Minor Project — Department of Computer Science, Bhagwan Parshuram Institute of Technology, Rohini, New Delhi
 Guide: Dr. Varsha Sharma | Team: Arsh Tiwari (15520802723), Mayank (15220802723), Harshit Aggarwal (15020802723)
 Modelled on Smart India Hackathon problem statement **SIH25004** — *"Image based breed recognition for cattle and buffaloes of India"* (Ministry of Fisheries, Animal Husbandry & Dairying).
 
