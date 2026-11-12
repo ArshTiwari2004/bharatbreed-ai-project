@@ -1,17 +1,20 @@
-# BharatBreed AI
-### AI-Powered Image-Based Breed Recognition System for Indian Cattle & Buffaloes
 
-Modelled on Smart India Hackathon problem statement **SIH25004** — *"Image based breed recognition for cattle and buffaloes of India"* (Ministry of Fisheries, Animal Husbandry & Dairying).
+# bharatbreed ai
 
----
+ai-powered image-based breed recognition system for indian cattle and buffaloes.
 
-## 1. The problem, in one paragraph
+modelled on [sih25004](https://www.sih.gov.in/) - image-based breed recognition for cattle and buffaloes of india, proposed by the ministry of fisheries, animal husbandry & dairying.
+
+read the [research paper](https://zenodo.org/records/24156662) for the detailed approach, methodology, and findings.
+
+
+## 1. problem
 
 Field Level Workers (FLWs) enter livestock records into the **Bharat Pashudhan App (BPA)**, India's national livestock database. Every other field in that record is fairly objective — but **breed is typed in by a human, from memory, by eye**. India has 50+ recognised cattle breeds and a dozen+ buffalo breeds, many visually close and further blurred by cross-breeding. That single manual field quietly corrupts a database used for genetic-improvement schemes, vaccination drives, insurance claims and subsidy disbursal. Academic work on cattle breed classification exists, but it almost always stops at "we trained a model and got X% accuracy" on a small curated dataset — it doesn't address running on a ₹8,000 Android phone with patchy connectivity, or how the prediction gets back into BPA. **BharatBreed AI closes that specific, second half of the gap.**
 
 ---
 
-## 2. Proposed solution — in points
+## 2. solution
 
 1. **Confidence-aware CNN, not a forced single answer.** A transfer-learning model (EfficientNetB0 / ResNet50 backbone) predicts a breed. If it's confident (≥70%), auto-accept. If not, show the FLW a ranked top-3 shortlist instead of guessing on their behalf.
 2. **Mobile-first from day one.** The trained model is exported to **TensorFlow Lite** (float32 + INT8 quantized) so inference runs on-device on low/mid-range Android hardware, without needing connectivity at the point of capture.
@@ -22,7 +25,7 @@ Field Level Workers (FLWs) enter livestock records into the **Bharat Pashudhan A
 
 ---
 
-## 3. System architecture
+## 3. architecture
 
 ```mermaid
 flowchart TD
@@ -42,7 +45,7 @@ flowchart TD
 
 **Reading the diagram:** everything left of the diamond is the "AI" half of the project (perception); everything right of it, including the feedback arrow back into the CNN box, is the "system" half that most academic prototypes never build. That second half is this project's actual contribution.
 
-## 4. Technical / deployment architecture
+## 4. tech architecture
 
 ```mermaid
 flowchart LR
@@ -72,7 +75,7 @@ flowchart LR
 
 ---
 
-## 5. Tech stack, and why
+## 5. tech stack 
 
 | Layer | Choice | Why this and not something else |
 |---|---|---|
@@ -92,47 +95,9 @@ Scope note: there is **no production website**. The interface is a lightweight *
 
 ---
 
-## 6. Project structure
+## 6. how to run it
 
-```
-BharatBreedAI/
-├── README.md
-├── requirements.txt
-├── app.py                       # Streamlit front end (streamlit run app.py)
-├── run_pipeline.py              # one command: runs the entire pipeline end-to-end
-├── data/
-│   ├── raw/<breed_name>/*.jpg   # training images, one folder per class
-│   └── processed/               # reserved for cached/derived data
-├── models/
-│   ├── bharatbreed_model.keras
-│   ├── bharatbreed_model.tflite
-│   ├── bharatbreed_model_int8.tflite
-│   └── label_map.json
-├── logs/
-│   ├── training_history.json
-│   ├── feedback_log.jsonl
-│   └── bpa_sync_mock.jsonl
-├── src/
-│   ├── config.py                 # all paths + hyperparameters in one place
-│   ├── generate_sample_dataset.py# synthetic placeholder dataset (offline demo only)
-│   ├── data_prep.py              # tf.data pipeline + augmentation + split
-│   ├── model.py                  # transfer-learning model builder
-│   ├── train.py                  # two-stage training entry point
-│   ├── convert_tflite.py         # exports + benchmarks .tflite artifacts
-│   ├── inference.py               # confidence-aware prediction (the decision layer)
-│   ├── ui_helpers.py              # photo-quality check, confirm+sync logic, record tables (used by app.py)
-│   ├── feedback_loop.py           # logs field confirmations/overrides
-│   └── bpa_sync_stub.py           # mocked BPA data-sync API
-└── tests/
-    ├── test_pipeline.py           # pipeline sanity checks
-    └── test_ui.py                 # UI helper + headless Streamlit app tests
-```
-
----
-
-## 7. How to run it
-
-### 7.1 Setup
+### 6.1 Setup
 
 ```bash
 git clone <your-repo-url> BharatBreedAI
@@ -141,7 +106,7 @@ python3 -m venv .venv && source .venv/bin/activate      # optional but recommend
 pip install -r requirements.txt
 ```
 
-### 7.2 One command, full pipeline (recommended for a demo)
+### 6.2 One command, full pipeline (recommended for a demo)
 
 ```bash
 python run_pipeline.py
@@ -149,7 +114,7 @@ python run_pipeline.py
 
 This will, in order: generate a small placeholder dataset (only if `data/raw/` is empty), train the model, export it to TFLite, run a confidence-aware prediction on a sample image, log a simulated field confirmation, and sync it to the mocked BPA endpoint. Everything needed for a live walkthrough happens in this one command.
 
-### 7.3 Step-by-step (if you want to inspect / present each stage)
+### 6.3 Step-by-step (if you want to inspect / present each stage)
 
 ```bash
 python src/generate_sample_dataset.py   # 1. build the demo dataset
@@ -160,18 +125,18 @@ python src/feedback_loop.py             # 5. demo feedback logging
 python src/bpa_sync_stub.py             # 6. demo mocked BPA sync
 ```
 
-### 7.4 Using real breed photographs instead of the placeholder set
+### 6.4 Using real breed photographs instead of the placeholder set
 
 Replace the contents of `data/raw/<breed_name>/` with real images (e.g. a public Indian cattle/buffalo breed dataset, or field-collected photos), keeping one folder per breed. Nothing else changes — `data_prep.py` reads whatever class folders it finds. With real data and internet access (so `weights="imagenet"` downloads successfully in `model.py`), accuracy will be dramatically higher than the placeholder run described below.
 
-### 7.5 Run the sanity tests
+### 6.5 Run the sanity tests
 
 ```bash
 python -m pytest tests/ -v
 # or: python tests/test_pipeline.py && python tests/test_ui.py
 ```
 
-### 7.6 Run the front end (UI)
+### 6.6 Run the front end (UI)
 
 ```bash
 pip install -r requirements.txt
@@ -189,13 +154,13 @@ To use it from a phone on the same Wi-Fi: `streamlit run app.py --server.address
 
 Troubleshooting: if the port is busy, add `--server.port 8502`. UI tests: `python tests/test_ui.py`.
 
-### 7.7 A note on this repo's demo run
+### 6.7 A note on this repo's demo run
 
 This repository ships with a **synthetic placeholder dataset** (procedurally generated shapes/colours standing in for breeds) so the *entire* pipeline — training, TFLite export, confidence-based inference, feedback logging, mocked BPA sync — can be verified end-to-end with zero setup, no internet dependency, and no copyrighted image dataset bundled into the repo. Because of that, and because in a fully offline environment the ImageNet pretrained weights can't be downloaded either (the code detects this and falls back to random init automatically — see `model.py`), **the demo run's reported accuracy is not representative of real-world performance.** Swap in a real, labelled breed dataset and run with internet access, and the exact same code trains a genuine transfer-learning classifier — this is a data/weights substitution, not a code change.
 
 ---
 
-## 8. Scalability notes
+## 7. scalibility
 
 - **Model size / latency:** EfficientNetB0 + INT8 quantization keeps the deployed artifact in the low single-digit MB range with millisecond-scale inference — this was a design constraint, not an afterthought, because the target device is a field worker's existing mid-range phone.
 - **Horizontal scale on the backend:** training and any hosted inference service are stateless and containerizable; `EPOCHS_HEAD` / `EPOCHS_FINE_TUNE` / `BATCH_SIZE` in `config.py` are the knobs to turn for a full-size dataset on a GPU box or Colab, no code changes needed.
@@ -205,7 +170,7 @@ This repository ships with a **synthetic placeholder dataset** (procedurally gen
 
 ---
 
-## 9. Existing work — what's out there, and why this is different
+## 8. existing work
 
 | Source | What it does | Gap vs. this project |
 |---|---|---|
@@ -219,7 +184,7 @@ This repository ships with a **synthetic placeholder dataset** (procedurally gen
 
 ---
 
-## 10. Outcomes delivered
+## 9. outcomes
 
 - A trained, transfer-learning CNN breed classifier (swappable ResNet50 / EfficientNetB0 backbone).
 - `.tflite` (float32) and quantized `.tflite` (INT8) exports, benchmarked for inference latency.
@@ -230,7 +195,7 @@ This repository ships with a **synthetic placeholder dataset** (procedurally gen
 
 ---
 
-## 11. Bibliography
+## 10. bibliography
 
 1. ICAR e-Publications, "Image-based breed identification and classification studies on Indian livestock," *International Journal of Dairy Science* — https://epubs.icar.org.in/index.php/IJDS/article/view/163317
 2. IJRASET, "Image-Based Breed Recognition of Indian Cattle and Buffaloes" — https://www.ijraset.com/research-paper/image-based-breed-recognition-of-indian-cattle-and-buffaloes
